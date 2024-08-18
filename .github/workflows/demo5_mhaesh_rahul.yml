@@ -1,0 +1,43 @@
+name: java execution
+on:
+  push:
+    branches:
+      - main
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    container:
+      image: openjdk:17-jdk-slim
+    steps:
+    - uses: actions/checkout@v4
+    - name: Compile Java
+      run: javac Hello.java
+    - name: Save Class File
+      run: echo "Compiled Hello.class"
+    - name: Upload Class File
+      uses: actions/upload-artifact@v3
+      with:
+        name: Hello-class
+        path: Hello.class
+  run:
+    runs-on: ubuntu-latest
+    container:
+      image: openjdk:17-jdk-slim
+    needs: compile
+    steps:
+    - uses: actions/checkout@v4
+    - name: Download Class File
+      uses: actions/download-artifact@v3
+      with:
+        name: Hello-class
+    - name: Run Java Program
+      run: java Hello
+  print_variable:
+  
+    runs-on: ubuntu-latest
+  
+    steps:
+    - name: Print STATUS
+      env:
+        STATUS: "Hello, System"
+      run: echo $STATUS
